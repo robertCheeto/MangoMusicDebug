@@ -17,6 +17,51 @@ public class ReportsDao {
         this.dataManager = dataManager;
     }
 
+    public List<ReportResult> getUserDiversityScore(){
+        List<ReportResult> results = new ArrayList<>();
+
+        String query = "SELECT " +
+                "U.user_id AS User_ID, " +
+                "    U.username AS Username, " +
+                "    U.subscription_type AS Sub_Type, " +
+                "    COUNT(DISTINCT A.artist_id) AS Distinct_Artists, " +
+                "    COUNT(DISTINCT A.primary_genre) AS Distinct_Genres, " +
+                "    COUNT(AP.play_id) AS Total_Plays, " +
+                "    ROUND(COUNT(DISTINCT A.primary_genre) / COUNT(DISTINCT A.artist_id) * 100.0, 2) AS Diversity_Score " +
+                "FROM users as U JOIN album_plays AS AP ON (AP.user_id = U.user_id) " +
+                "JOIN albums AS AL ON (AL.album_id = AP.album_id) " +
+                "JOIN artists AS A ON (A.artist_id = AL.artist_id) " +
+                "GROUP BY User_ID, Username, Sub_Type " +
+                "HAVING COUNT(AP.play_id) > 20 " +
+                "ORDER BY Diversity_Score DESC " +
+                "LIMIT 100; ";
+
+        try {
+            Connection connection = dataManager.getConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet rs = statement.executeQuery()) {
+
+                while (rs.next()) {
+                    ReportResult result = new ReportResult();
+                    result.addColumn("user_id", rs.getInt("user_id"));
+                    result.addColumn("username", rs.getString("username"));
+                    result.addColumn("sub_type", rs.getString("sub_type"));
+                    result.addColumn("distinct_artists", rs.getInt("distinct_artists"));
+                    result.addColumn("distinct_genres", rs.getInt("distinct_genres"));
+                    result.addColumn("total_plays", rs.getInt("total_plays"));
+                    result.addColumn("diversity_score", rs.getInt("diversity_score"));
+                    results.add(result);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error running the User Diversity Score Report: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return results;
+    }
+
     public List<ReportResult> getMostPlayedAlbumsByGenre(){
         List<ReportResult> results = new ArrayList<>();
 

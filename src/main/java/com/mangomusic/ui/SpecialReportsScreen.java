@@ -22,7 +22,7 @@ public class SpecialReportsScreen {
             InputValidator.clearScreen();
             displayMenu();
 
-            int choice = InputValidator.getIntInRange("Select an option: ", 0, 2);
+            int choice = InputValidator.getIntInRange("Select an option: ", 0, 3);
 
             switch (choice) {
                 case 1:
@@ -32,8 +32,7 @@ public class SpecialReportsScreen {
                     showMostPlayedAlbumsByGenre();
                     break;
                 case 3:
-                    //@TODO - Create report
-//                    showUserDiversityScore();
+                    showUserDiversityScore();
                     break;
                 case 4:
                     //@TODO - Create report
@@ -132,5 +131,34 @@ public class SpecialReportsScreen {
         }
 
         InputValidator.pressEnterToContinue();
+    }
+
+    private void showUserDiversityScore(){
+        InputValidator.clearScreen();
+        ConsoleColors.printSection("Top 100 User Diversity Scores");
+        System.out.println("Shows the Top 100 User Diversity Scores\n");
+
+        List<ReportResult> results = reportsDao.getUserDiversityScore();
+
+        if (results.isEmpty()) {
+            ConsoleColors.printWarning("No data available for this report.");
+        } else {
+            System.out.printf("%-15s %20s %20s %20s %20s %20s %20s%n", "User_ID", "Username", "Sub_Type", "Distinct_Artists", "Distinct_Genres", "Total_Plays", "Diversity_Score");
+            System.out.println("-".repeat(100));
+            int i = 0;
+
+            for (ReportResult result : results) {
+                if (i % 5 == 0 && i != 0) {
+                    System.out.println("----");
+                }
+                System.out.printf("%-6s %-30s %-30s %30d %30d%n",
+                        result.getString("genre"),
+                        result.getString("album_title"),
+                        result.getString("artist_name"),
+                        result.getInt("play_count"),
+                        result.getInt("genre_rank"));
+                i++;
+            }
+        }
     }
 }
