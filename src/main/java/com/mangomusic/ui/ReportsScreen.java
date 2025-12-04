@@ -29,12 +29,9 @@ public class ReportsScreen {
             InputValidator.clearScreen();
             displayMenu();
 
-            int choice = InputValidator.getIntInRange("Select an option: ", 0, 12);
+            int choice = InputValidator.getIntInRange("Select an option: ", 0, 11);
 
             switch (choice) {
-                case 12:
-                    showMostPlayedAlbumsByGenre();
-                    break;
                 case 1:
                     showDailyActiveUsers();
                     break;
@@ -91,7 +88,6 @@ public class ReportsScreen {
         System.out.println("5. Genre Popularity Rankings");
         System.out.println("6. Top Artists by Play Count");
         System.out.println("7. Album Completion Rate Summary");
-        System.out.println("12. Top 5 Albums By Genre");
 
         System.out.println("\nUSER INSIGHTS:");
         System.out.println("8. User Retention (7-Day)");
@@ -103,37 +99,7 @@ public class ReportsScreen {
         System.out.println();
     }
 
-    private void showMostPlayedAlbumsByGenre() {
-        InputValidator.clearScreen();
-        ConsoleColors.printSection("Most Played Albums By Genre");
-        System.out.println("Shows the Top 5 Played Albums By Genre\n");
 
-        List<ReportResult> results = reportsDao.getMostPlayedAlbumsByGenre();
-
-        if (results.isEmpty()) {
-            ConsoleColors.printWarning("No data available for this report.");
-        } else {
-            System.out.printf("%-15s %20s %20s %20s%n", "Album", "Artist", "Play Count", "Rank");
-            System.out.println("-".repeat(100));
-            int i = 0;
-
-            for (ReportResult result : results) {
-                if (i % 5 == 0 && i != 0) {
-                    System.out.println("----");
-                }
-                System.out.printf("%-6s %-30s %-30s %30d %30d%n",
-                        truncate(result.getString("genre"), 50),
-                        truncate(result.getString("album_title"), 50),
-                        truncate(result.getString("artist_name"), 40),
-                        result.getInt("play_count"),
-                        result.getInt("genre_rank"));
-                i++;
-            }
-            //System.out.println("\nTotal days shown: " + results.size());
-        }
-
-        InputValidator.pressEnterToContinue();
-    }
 
     /**
      * Shows Daily Active Users report

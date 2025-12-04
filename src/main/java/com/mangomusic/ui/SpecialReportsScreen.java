@@ -5,6 +5,8 @@ import com.mangomusic.models.ReportResult;
 import com.mangomusic.util.ConsoleColors;
 import com.mangomusic.util.InputValidator;
 
+import java.util.List;
+
 public class SpecialReportsScreen {
 
     private final ReportsDao reportsDao;
@@ -20,15 +22,14 @@ public class SpecialReportsScreen {
             InputValidator.clearScreen();
             displayMenu();
 
-            int choice = InputValidator.getIntInRange("Select an option: ", 0, 1);
+            int choice = InputValidator.getIntInRange("Select an option: ", 0, 2);
 
             switch (choice) {
                 case 1:
                     showMangoMusicMapped();
                     break;
                 case 2:
-                    //@TODO - Create report
-//                    showMostPlayedAlbumsByGenre();
+                    showMostPlayedAlbumsByGenre();
                     break;
                 case 3:
                     //@TODO - Create report
@@ -97,6 +98,37 @@ public class SpecialReportsScreen {
             System.out.println("\n" + "=".repeat(70));
             System.out.println("Thanks for making " + year + " a year full of music! 🎶");
             System.out.println("=".repeat(70));
+        }
+
+        InputValidator.pressEnterToContinue();
+    }
+
+    private void showMostPlayedAlbumsByGenre() {
+        InputValidator.clearScreen();
+        ConsoleColors.printSection("Most Played Albums By Genre");
+        System.out.println("Shows the Top 5 Played Albums By Genre\n");
+
+        List<ReportResult> results = reportsDao.getMostPlayedAlbumsByGenre();
+
+        if (results.isEmpty()) {
+            ConsoleColors.printWarning("No data available for this report.");
+        } else {
+            System.out.printf("%-15s %20s %20s %20s%n", "Album", "Artist", "Play Count", "Rank");
+            System.out.println("-".repeat(100));
+            int i = 0;
+
+            for (ReportResult result : results) {
+                if (i % 5 == 0 && i != 0) {
+                    System.out.println("----");
+                }
+                System.out.printf("%-6s %-30s %-30s %30d %30d%n",
+                        result.getString("genre"),
+                        result.getString("album_title"),
+                        result.getString("artist_name"),
+                        result.getInt("play_count"),
+                        result.getInt("genre_rank"));
+                i++;
+            }
         }
 
         InputValidator.pressEnterToContinue();

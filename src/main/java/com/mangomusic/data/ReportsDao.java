@@ -19,17 +19,6 @@ public class ReportsDao {
 
     public List<ReportResult> getMostPlayedAlbumsByGenre(){
         List<ReportResult> results = new ArrayList<>();
-//        String query = "SELECT " +
-//                "    ar.primary_genre as genre, " +
-//                "    al.title as album_title, " +
-//                "    ar.name as artist_name, " +
-//                "    COUNT(*) as play_count " +
-//                "FROM album_plays AS ap " +
-//                "JOIN albums AS al ON (ap.album_id = al.album_id) " +
-//                "JOIN artists AS ar ON (al.artist_id = ar.artist_id) " +
-//                "GROUP BY al.album_id, al.title, ar.name " +
-//                "ORDER BY play_count DESC " +
-//                "LIMIT 5";
 
         String query = "SELECT " +
                 "    genre, album_title, artist_name, play_count, genre_rank " +
