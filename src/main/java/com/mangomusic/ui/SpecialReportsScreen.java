@@ -148,16 +148,14 @@ public class SpecialReportsScreen {
             int i = 0;
 
             for (ReportResult result : results) {
-                if (i % 5 == 0 && i != 0) {
-                    System.out.println("----");
-                }
-                System.out.printf("%-6s %-30s %-30s %30d %30d%n",
-                        result.getString("genre"),
-                        result.getString("album_title"),
-                        result.getString("artist_name"),
-                        result.getInt("play_count"),
-                        result.getInt("genre_rank"));
-                i++;
+                System.out.printf("%-6d %-30s %-30s %10d %10d %10d %10.2f%n",
+                        result.getInt("User_ID"),
+                        result.getString("Username"),
+                        result.getString("Sub_Type"),
+                        result.getInt("Distinct_Artists"),
+                        result.getInt("Distinct_Genres"),
+                        result.getInt("Total_Plays"),
+                        result.getDouble("Diversity_Score"));
             }
         }
     }

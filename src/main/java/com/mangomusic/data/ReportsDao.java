@@ -44,17 +44,16 @@ public class ReportsDao {
 
                 while (rs.next()) {
                     ReportResult result = new ReportResult();
-                    result.addColumn("user_id", rs.getInt("user_id"));
-                    result.addColumn("username", rs.getString("username"));
-                    result.addColumn("sub_type", rs.getString("sub_type"));
-                    result.addColumn("distinct_artists", rs.getInt("distinct_artists"));
-                    result.addColumn("distinct_genres", rs.getInt("distinct_genres"));
-                    result.addColumn("total_plays", rs.getInt("total_plays"));
-                    result.addColumn("diversity_score", rs.getInt("diversity_score"));
+                    result.addColumn("User_ID", rs.getInt("User_ID"));
+                    result.addColumn("Username", rs.getString("Username"));
+                    result.addColumn("Sub_Type", rs.getString("Sub_Type"));
+                    result.addColumn("Distinct_Artists", rs.getInt("Distinct_Artists"));
+                    result.addColumn("Distinct_Genres", rs.getInt("Distinct_Genres"));
+                    result.addColumn("Total_Plays", rs.getInt("Total_Plays"));
+                    result.addColumn("Diversity_Score", rs.getDouble("Diversity_Score"));
                     results.add(result);
                 }
             }
-
         } catch (SQLException e) {
             System.err.println("Error running the User Diversity Score Report: " + e.getMessage());
             e.printStackTrace();
