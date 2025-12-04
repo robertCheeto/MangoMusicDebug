@@ -19,17 +19,39 @@ public class ReportsDao {
 
     public List<ReportResult> getMostPlayedAlbumsByGenre(){
         List<ReportResult> results = new ArrayList<>();
+//        String query = "SELECT " +
+//                "    ar.primary_genre as genre, " +
+//                "    al.title as album_title, " +
+//                "    ar.name as artist_name, " +
+//                "    COUNT(*) as play_count " +
+//                "FROM album_plays AS ap " +
+//                "JOIN albums AS al ON (ap.album_id = al.album_id) " +
+//                "JOIN artists AS ar ON (al.artist_id = ar.artist_id) " +
+//                "GROUP BY al.album_id, al.title, ar.name " +
+//                "ORDER BY play_count DESC " +
+//                "LIMIT 5";
+
         String query = "SELECT " +
-                "    ar.primary_genre as genre, " +
-                "    al.title as album_title, " +
-                "    ar.name as artist_name, " +
-                "    COUNT(*) as play_count " +
-                "FROM album_plays AS ap " +
-                "JOIN albums AS al ON (ap.album_id = al.album_id) " +
-                "JOIN artists AS ar ON (al.artist_id = ar.artist_id) " +
-                "GROUP BY al.album_id, al.title, ar.name " +
-                "ORDER BY play_count DESC " +
-                "LIMIT 5";
+                "    genre, album_title, artist_name, play_count, genre_rank " +
+                "FROM (" +
+                "    SELECT " +
+                "        ar.primary_genre AS genre, " +
+                "        al.title AS album_title, " +
+                "        ar.name AS artist_name, " +
+                "        COUNT(p.play_id) AS play_count, " +
+                "        ROW_NUMBER() OVER (PARTITION BY ar.primary_genre ORDER BY COUNT(p.play_id) DESC ) AS genre_rank, " +
+                "        COUNT(*) OVER ( PARTITION BY ar.primary_genre ) AS genre_total " +
+                "    FROM album_plays p " +
+                "    JOIN albums al ON p.album_id = al.album_id " +
+                "    JOIN artists ar ON al.artist_id = ar.artist_id " +
+                "    GROUP BY " +
+                "        ar.primary_genre, " +
+                "        al.album_id, " +
+                "        al.title, " +
+                "        ar.name " +
+                ") AS ranked " +
+                "WHERE genre_rank <= 5 AND genre_total >= 5 " +
+                "ORDER BY genre, genre_rank";
 
         try {
             Connection connection = dataManager.getConnection();
@@ -43,6 +65,7 @@ public class ReportsDao {
                     result.addColumn("album_title", rs.getString("album_title"));
                     result.addColumn("artist_name", rs.getString("artist_name"));
                     result.addColumn("play_count", rs.getInt("play_count"));
+                    result.addColumn("genre_rank", rs.getInt("genre_rank"));
                     results.add(result);
                 }
             }

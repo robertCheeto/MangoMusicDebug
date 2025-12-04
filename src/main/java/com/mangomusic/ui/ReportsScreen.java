@@ -115,19 +115,21 @@ public class ReportsScreen {
         } else {
             System.out.printf("%-15s %20s %20s %20s%n", "Album", "Artist", "Play Count", "Rank");
             System.out.println("-".repeat(100));
-            int i = 1;
+            int i = 0;
 
             for (ReportResult result : results) {
+                if (i % 5 == 0 && i != 0) {
+                    System.out.println("----");
+                }
                 System.out.printf("%-6s %-30s %-30s %30d %30d%n",
                         truncate(result.getString("genre"), 50),
                         truncate(result.getString("album_title"), 50),
                         truncate(result.getString("artist_name"), 40),
                         result.getInt("play_count"),
-                        i);
+                        result.getInt("genre_rank"));
                 i++;
             }
-
-            System.out.println("\nTotal days shown: " + results.size());
+            //System.out.println("\nTotal days shown: " + results.size());
         }
 
         InputValidator.pressEnterToContinue();
