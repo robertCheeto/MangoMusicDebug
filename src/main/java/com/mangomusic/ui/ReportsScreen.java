@@ -29,7 +29,7 @@ public class ReportsScreen {
             InputValidator.clearScreen();
             displayMenu();
 
-            int choice = InputValidator.getIntInRange("Select an option: ", 0, 11);
+            int choice = InputValidator.getIntInRange("Select an option: ", 0, 12);
 
             switch (choice) {
                 case 12:
@@ -113,13 +113,18 @@ public class ReportsScreen {
         if (results.isEmpty()) {
             ConsoleColors.printWarning("No data available for this report.");
         } else {
-            System.out.printf("%-15s %20s%n", "Date", "Daily Active Users");
-            System.out.println("-".repeat(40));
+            System.out.printf("%-15s %20s %20s %20s%n", "Album", "Artist", "Play Count", "Rank");
+            System.out.println("-".repeat(100));
+            int i = 1;
 
             for (ReportResult result : results) {
-                System.out.printf("%-15s %20s%n",
-                        result.getString("activity_date"),
-                        result.getInt("daily_active_users"));
+                System.out.printf("%-6s %-30s %-30s %30d %30d%n",
+                        truncate(result.getString("genre"), 50),
+                        truncate(result.getString("album_title"), 50),
+                        truncate(result.getString("artist_name"), 40),
+                        result.getInt("play_count"),
+                        i);
+                i++;
             }
 
             System.out.println("\nTotal days shown: " + results.size());

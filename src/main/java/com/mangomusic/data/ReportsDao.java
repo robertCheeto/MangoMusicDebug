@@ -20,7 +20,7 @@ public class ReportsDao {
     public List<ReportResult> getMostPlayedAlbumsByGenre(){
         List<ReportResult> results = new ArrayList<>();
         String query = "SELECT " +
-                "    ar.primary_genre as genre," +
+                "    ar.primary_genre as genre, " +
                 "    al.title as album_title, " +
                 "    ar.name as artist_name, " +
                 "    COUNT(*) as play_count " +
