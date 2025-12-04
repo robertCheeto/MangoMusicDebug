@@ -17,6 +17,44 @@ public class ReportsDao {
         this.dataManager = dataManager;
     }
 
+    public List<ReportResult> getMostPlayedAlbumsByGenre(){
+        List<ReportResult> results = new ArrayList<>();
+        String query = "SELECT " +
+                "    ar.primary_genre as genre," +
+                "    al.title as album_title, " +
+                "    ar.name as artist_name, " +
+                "    COUNT(*) as play_count " +
+                "FROM album_plays AS ap " +
+                "JOIN albums AS al ON (ap.album_id = al.album_id) " +
+                "JOIN artists AS ar ON (al.artist_id = ar.artist_id) " +
+                "GROUP BY al.album_id, al.title, ar.name " +
+                "ORDER BY play_count DESC " +
+                "LIMIT 5";
+
+        try {
+            Connection connection = dataManager.getConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(query);
+                 ResultSet rs = statement.executeQuery()) {
+
+                while (rs.next()) {
+                    // Genre           Album Title                    Artist Name          Play Count  Rank
+                    ReportResult result = new ReportResult();
+                    result.addColumn("genre", rs.getString("genre"));
+                    result.addColumn("album_title", rs.getString("album_title"));
+                    result.addColumn("artist_name", rs.getString("artist_name"));
+                    result.addColumn("play_count", rs.getInt("play_count"));
+                    results.add(result);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error running Top Albums This Month report: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return results;
+    }
+
     public List<ReportResult> getDailyActiveUsersReport() {
         List<ReportResult> results = new ArrayList<>();
         String query = "SELECT " +

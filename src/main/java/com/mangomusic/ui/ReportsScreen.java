@@ -32,6 +32,9 @@ public class ReportsScreen {
             int choice = InputValidator.getIntInRange("Select an option: ", 0, 11);
 
             switch (choice) {
+                case 12:
+                    showMostPlayedAlbumsByGenre();
+                    break;
                 case 1:
                     showDailyActiveUsers();
                     break;
@@ -88,6 +91,7 @@ public class ReportsScreen {
         System.out.println("5. Genre Popularity Rankings");
         System.out.println("6. Top Artists by Play Count");
         System.out.println("7. Album Completion Rate Summary");
+        System.out.println("12. Top 5 Albums By Genre");
 
         System.out.println("\nUSER INSIGHTS:");
         System.out.println("8. User Retention (7-Day)");
@@ -97,6 +101,31 @@ public class ReportsScreen {
 
         System.out.println("\n0. Back to main menu");
         System.out.println();
+    }
+
+    private void showMostPlayedAlbumsByGenre() {
+        InputValidator.clearScreen();
+        ConsoleColors.printSection("Most Played Albums By Genre");
+        System.out.println("Shows the Top 5 Played Albums By Genre\n");
+
+        List<ReportResult> results = reportsDao.getMostPlayedAlbumsByGenre();
+
+        if (results.isEmpty()) {
+            ConsoleColors.printWarning("No data available for this report.");
+        } else {
+            System.out.printf("%-15s %20s%n", "Date", "Daily Active Users");
+            System.out.println("-".repeat(40));
+
+            for (ReportResult result : results) {
+                System.out.printf("%-15s %20s%n",
+                        result.getString("activity_date"),
+                        result.getInt("daily_active_users"));
+            }
+
+            System.out.println("\nTotal days shown: " + results.size());
+        }
+
+        InputValidator.pressEnterToContinue();
     }
 
     /**
