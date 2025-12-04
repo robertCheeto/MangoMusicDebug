@@ -38,7 +38,6 @@ public class ReportsDao {
                  ResultSet rs = statement.executeQuery()) {
 
                 while (rs.next()) {
-                    // Genre           Album Title                    Artist Name          Play Count  Rank
                     ReportResult result = new ReportResult();
                     result.addColumn("genre", rs.getString("genre"));
                     result.addColumn("album_title", rs.getString("album_title"));
